@@ -14,6 +14,7 @@ $Algorithm\ 1$ (Pop, jump and push ideals generation). Given an arborescence who
 
 
 **Steps**: 
+
 ```text
 while s:
     visit s
@@ -24,29 +25,40 @@ while s:
 ## How it works...
 
 a) Begin with a tree:
+
 <img src="./images/tree.svg" style="background-color:white;padding:10px;">
 
+```
 Labels:
-    - root = 1
-    - parents = [$\rlap{/}{\backslash}$,1,1,1,2,2,3]
-    - children = [1,2,3,4,5,6,7]
+    root = 1
+    parents = [X,1,1,1,2,2,3]
+    children = [1,2,3,4,5,6,7]
+```
 
 b) Sort the tree's node labels/objects/pointers to pre-order.
+
 <img src="./images/pre-ordered-nodes.svg" style="background-color:white;padding:10px;">
+
+```
 Pre-Order:
-    - root = 1
-    - parents = [$\rlap{/}{\backslash}$,1,2,2,1,3,1]
-    - children = [1,2,5,6,3,7,4]
-    - indices = [0,1,2,3,4,5,6]
+    root = 1
+    parents = [X,1,2,2,1,3,1]
+    children = [1,2,5,6,3,7,4]
+    indices = [0,1,2,3,4,5,6]
+```
 
 c) Get the pre-order index of the first node of the next right subtree for each node. Use 'n' for the missing rightmost at the end.
+
 <img src="./images/jump-indices.svg" style="background-color:white;padding:10px;">
+
+```text
 Next Subtree Root:
-    - root = 1
-    - parents = [$\rlap{/}{\backslash}$,1,2,2,1,3,1]
-    - children = [1,2,5,6,3,7,4]
-    - indices = [0,1,2,3,4,5,6]
-    - jump_indices = [7,4,3,4,6,6,7]
+    root = 1
+    parents = [X,1,2,2,1,3,1]
+    children = [1,2,5,6,3,7,4]
+    indices = [0,1,2,3,4,5,6]
+    jump_indices = [7,4,3,4,6,6,7]
+```
 
 d) Consume the end of the indices and replenish from the root of the next subtree to the last descendant of the tree.
 
@@ -99,6 +111,7 @@ The visited indices can be used to lookup the original node labels/objects/point
 Another option is to manipulate values alongside the indices sequence.
 
 Let each node be given a weight in $W = [w_0,…,w_{n−1}]$ and have $w = \sum W$. Then
+
 ```text
 while s:
     visit s, w
