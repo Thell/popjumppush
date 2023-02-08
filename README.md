@@ -16,7 +16,7 @@ $Algorithm\ 1$ (Pop, jump and push ideals generation). Given an arborescence who
 
 > **Steps**: 
 
-> $\text{while } s \\
+$\text{while } s \\
 \qquad\text{visit } s \\
 \qquad i = j[s.pop()] \\
 \qquad s.push([i..n))$
