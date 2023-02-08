@@ -16,17 +16,15 @@ $Algorithm\ 1$ (Pop, jump and push ideals generation). Given an arborescence who
 
 > **Steps**: 
 
-$\text{while } s \\
-\qquad\text{visit } s \\
-\qquad i = j[s.pop()] \\
-\qquad s.push([i..n))$
+> $\text{while } s$:
+$\qquad\text{visit } s$
+$\qquad i = j[s.pop()]$
+$\qquad s.push([i..n))$
 
 ## How it works...
 
 a) Begin with a tree:
-
 <img src="./images/tree.svg">
-
 $\text{Labels}\\
 \begin{aligned}
 \qquad root &= 1 \\
@@ -36,10 +34,7 @@ $\text{Labels}\\
 $
 
 b) Sort the tree's node labels/objects/pointers to pre-order.
-
-
 <img src="./images/pre-ordered-nodes.svg">
-
 $\text{Pre-Order} \\
 \begin{aligned}
 \qquad root &= 1 \\
@@ -50,10 +45,7 @@ $\text{Pre-Order} \\
 $
 
 c) Get the pre-order index of the first node of the next right subtree for each node. Use 'n' for the missing rightmost at the end.
-
 <img src="./images/jump-indices.svg">
-
-
 $\text{Next Subtree Root} \\
 \begin{aligned}
 \qquad root &= 1 \\
@@ -115,7 +107,6 @@ The visited indices can be used to lookup the original node labels/objects/point
 Another option is to manipulate values alongside the indices sequence.
 
 Let each node be given a weight in $W = [w_0,…,w_{n−1}]$ and have $w = \sum W$. Then
-
 > $\text{while } s$:
 $\qquad\text{visit } s, w$
 $\qquad i = s.pop()$
