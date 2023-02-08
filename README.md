@@ -26,7 +26,7 @@ while s:
 
 a) Begin with a tree:
 
-<img src="./images/tree.svg" style="background-color:white;padding:10px;">
+<img src="./images/tree-light-background.svg">
 
 ```
 Labels:
@@ -37,7 +37,7 @@ Labels:
 
 b) Sort the tree's node labels/objects/pointers to pre-order.
 
-<img src="./images/pre-ordered-nodes.svg" style="background-color:white;padding:10px;">
+<img src="./images/pre-ordered-nodes-light-background.svg">
 
 ```
 Pre-Order:
@@ -49,7 +49,7 @@ Pre-Order:
 
 c) Get the pre-order index of the first node of the next right subtree for each node. Use 'n' for the missing rightmost at the end.
 
-<img src="./images/jump-indices.svg" style="background-color:white;padding:10px;">
+<img src="./images/jump-indices-light-background.svg">
 
 ```text
 Next Subtree Root:
