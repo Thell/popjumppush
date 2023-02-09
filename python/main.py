@@ -219,27 +219,3 @@ if __name__ == '__main__':
     main(_algos, _node_data, OUTPUT, REPS)
 
     sys.exit()
-
-# if __name__ == '__main__':
-#     ALGO = int(sys.argv[1])
-#     SAMPLE_SET = sys.argv[2]
-#     OUTPUT = int(sys.argv[3])
-#     REPS = int(sys.argv[4])
-
-#     _node_data = get_sample_data(SAMPLE_SET)
-
-#     if REPS == 0:
-#         summarize_sample_data(*_node_data)
-#         sys.exit()
-
-#     _algos = []
-#     if ALGO == 0:
-#         _algos = ["pop_jump_push"]
-#     elif ALGO == 1:
-#         _algos = ["koda_ruskey"]
-#     else:
-#         _algos = ["pop_jump_push", "koda_ruskey"]
-
-#     main(_algos, _node_data, OUTPUT, REPS)
-
-#     sys.exit()
