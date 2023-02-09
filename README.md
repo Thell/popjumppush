@@ -8,6 +8,8 @@ date: February 3, 2023
 
 This is a description of an algorithm for generating all ideals of an arborescence, where $\mathcal{I}$ is the number of ideals in the tree, with a constant amortized time of $O(1)$ per transition from $ideal_n$ to $ideal_{n+1}$ and an overall complexity of $O(\mathcal{I})$. It is believed this algorithm presents a novel approach not written about previously. The algorithm is short and simple to understand consisting of a pop, jump and push per ideal.
 
+- Python implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `python` directory.
+
 ----
 
 $Algorithm\ 1$ (Pop, jump and push ideals generation). Given an arborescence whos nodes are the sequence $(0, \ldots, n-1)$ when arranged in preorder, this algorithm visits all tuples $(s_1, \ldots, s_n)$ where $s_p \le s_c$ whenever $p$ is the parent of $c$. Rightmost subtrees are pushed or popped between one visit and the next. A single array of jump pointers $[j_1, j_2,\ldots,j_{n}]$ indicates the first node of the next right subtree or $n$ if one doesn't exist.
