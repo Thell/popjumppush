@@ -27,7 +27,7 @@ The number represents the number of nodes and `B` is for a fully balanced tree, 
 
 When using these algorithms in python I highly suggest using pypy (or another jit compiler). Compare the following `per ideal` timings, the first using `python` and the second using `pypy`.
 
-`> python .\python\main.py -a 2 -o 0 -s set_53X -r 5
+`> python .\python\main.py -a 2 -o 0 -s set_53X -r 5`
 
 ```
 Getting test set: set_53X
