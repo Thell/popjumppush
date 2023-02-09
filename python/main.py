@@ -101,12 +101,12 @@ def benchmark(algos, root, parents, children, reps):
 
         end_time_delta = get_timestamp_float() - start_time
 
-        print(
-            f"\n\tCompleted processing {i} ideals from {reps} trees with {ideals_count} ideals.",
-            f"\n\tAvg Duration per tree {end_time_delta / reps}"
-            f"\n\tBest Duration per tree {time_delta}\n\t"
-            f"{(end_time_delta / reps) / ideals_count * 10e9} ns avg per ideal"
-            f"\n\t{time_delta / ideals_count * 10e9} ns best per ideal\n")
+        print(f"\n\tCompleted generating {i:,} ideals "
+              f"from {reps} trees with {ideals_count:,} ideals."
+              f"\n\tAvg Duration per tree {end_time_delta / reps}"
+              f"\n\tBest Duration per tree {time_delta}\n\t"
+              f"{(end_time_delta / reps) / ideals_count * 1e9} ns avg per ideal"
+              f"\n\t{time_delta / ideals_count * 1e9} ns best per ideal\n")
 
 
 def generate_ideals(algos, root, parents, children, output):
