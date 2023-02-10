@@ -5,7 +5,7 @@ from node_manipulation import sorted_traversal_pre_order
 
 
 def pop_jump_push(num_nodes, sequence_indices, jump_indices):
-    """Given a tree rooted at r generate all rooted subtrees rooted at r by indices.
+    """ Given a tree rooted at r generate all rooted subtrees rooted at r by indices.
     """
     while sequence_indices:
         yield sequence_indices
@@ -13,6 +13,20 @@ def pop_jump_push(num_nodes, sequence_indices, jump_indices):
         while index < num_nodes:
             sequence_indices.append(index)
             index += 1
+
+
+def visit(ideal, labels, output):
+    """ Process/output ideals.
+    """
+    if output == 2:
+        print(ideal)
+    elif output == 3:
+        result = [labels[i] for i in ideal]
+        print(result)
+    else:
+        result = [labels[i] for i in ideal]
+        result.sort()
+        print(result)
 
 
 def prep_args(root, parents, children):

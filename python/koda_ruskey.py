@@ -38,6 +38,21 @@ def koda_ruskey(active_nodes, focus_pointers, left_child, fringe_l, fringe_r):
         yield active_nodes
 
 
+def visit(ideal, labels, output):
+    """ Process/output ideals.
+    """
+    if output == 2:
+        print(ideal)
+    else:
+        active_indices = [i for i, a in enumerate(ideal[1:]) if a]
+        if output == 3:
+            print(active_indices)
+        else:
+            result = [labels[i] for i in active_indices]
+            result.sort()
+            print(result)
+
+
 def prep_args(root, parents, children):
     """ Return a tuple of the arguments for calling koda_ruskey.
     """

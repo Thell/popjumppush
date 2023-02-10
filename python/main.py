@@ -15,13 +15,14 @@ from sample_data import summarize_sample_data
 
 from node_manipulation import count_subtrees
 from node_manipulation import get_sorted_children
-from node_manipulation import postorder_to_preorder
 
 from pop_jump_push import prep_args as prep_pop_jump_push_args
 from pop_jump_push import pop_jump_push
+from pop_jump_push import visit as visit_pop_jump_push
 
 from koda_ruskey import prep_args as prep_koda_ruskey_args
 from koda_ruskey import koda_ruskey
+from koda_ruskey import visit as visit_koda_ruskey
 
 INITIAL_TIMESTAMP: Final[float] = time.time()
 INITIAL_TIMESTAMP_PERF_COUNTER: Final[float] = time.perf_counter()
@@ -130,22 +131,12 @@ def generate_ideals(algos, root, parents, children, output):
         else:
             print("postorder ideals...")
 
-        for ideal in generator:
-            if output == 2:
-                print(ideal)
-            elif output == 3:
-                if algo == "koda_ruskey":
-                    print([sorted_children[i] for i, a in enumerate(ideal[1:]) if a])
-                else:
-                    print(ideal)
-            else:
-                if algo == "koda_ruskey":
-                    result = [sorted_children[i] for i, a in enumerate(ideal[1:]) if a]
-                    result = postorder_to_preorder(result)
-                    result.sort()
-                    print(result)
-                else:
-                    print([sorted_children[i] for i in ideal])
+        if algo == "pop_jump_push":
+            for ideal in generator:
+                visit_pop_jump_push(ideal, sorted_children, output)
+        else:
+            for ideal in generator:
+                visit_koda_ruskey(ideal, sorted_children, output)
 
 
 def main(algos, node_data, output, reps):
