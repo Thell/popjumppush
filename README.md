@@ -1,14 +1,34 @@
----
-title: "Generating all ideals of an arborescence."
-author: Thell Fowler
-date: February 3, 2023
----
-
 # Generating all ideals of an arborescence.
 
-This is a description of an algorithm for generating all ideals of an arborescence, where $\mathcal{I}$ is the number of ideals in the tree, with a constant amortized time of $O(1)$ per transition from $ideal_n$ to $ideal_{n+1}$ and an overall complexity of $O(\mathcal{I})$. It is believed this algorithm presents a novel approach not written about previously. The algorithm is short and simple to understand consisting of a pop, jump and push per ideal.
+This is a description of an algorithm for generating all ideals of an arborescence, where $\mathcal{I}$ is the number of ideals in the tree, with a constant amortized time of $O(1)$ per transition from $ideal_n$ to $ideal_{n+1}$ and an overall complexity of $O(\mathcal{I})$. It is believed this algorithm presents a novel approach not written about previously. The algorithm is short and simple to understand consisting of a pop, jump and push per ideal. I find it hard to believe it hasn't been written about _somewhere_ but I wasn't able to find it described anywhere. Please contact me if you have seen it.
 
+This problem is similar to generating forest ideals and can also be referred as:
+- Generate all rooted partial trees of a rooted tree.
+- Generate all r rooted subtrees of the tree rooted at $r$.
+- Generate all ordered combinations of descendants in a rooted tree.
+
+
+This repository contains:
 - Python implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `python` directory.
+- Rust implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `python` directory.
+
+Here's a brief summary showing python, pypy and rust generating all ideals of a 31 node fully balanced tree 100 times.
+```text
+Getting test set: set_31B
+Generating 458,328 ideals from 31 nodes 100 times (45,832,900).
+
+*** Python ***
+pop_jump_push   96.83866478881582 ns avg per ideal
+koda_ruskey    152.321651135006 ns avg per ideal
+
+*** pypy ***
+pop_jump_push   13.474159975150592 ns avg per ideal
+koda_ruskey     17.237536134107437 ns avg per ideal
+
+*** Rust ***
+pop_jump_push    1.6211760547554268 ns avg per ideal
+koda_ruskey      5.092732513107397 ns avg per ideal
+```
 
 ----
 
