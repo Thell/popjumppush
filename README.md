@@ -30,6 +30,19 @@ pop_jump_push    1.6211760547554268 ns avg per ideal
 koda_ruskey      5.092732513107397 ns avg per ideal
 ```
 
+It should also be noted that a parallel Pop Jump Push implementation which processes in chunks scales nicely with physical cores (since it is cpu-bound). Tree structure plays a big part in how many workers can be used. A 63 node fully balanced tree will not chunk well for 16 workers but 13 works fine.
+
+```text
+Getting test set: set_63B
+Generating 210066388900 ideals from 63 nodes 1 times (210066388900).
+
+*** Rust ***
+par_pop_jump_push    Avg Duration per tree   64.0275749 (13 workers)
+par_pop_jump_push    Avg Duration per tree   68.0275749 (8 workers)
+pop_jump_push        Avg Duration per tree  340.8131211
+koda_ruskey          Avg Duration per tree 1054.7239127
+```
+
 ----
 
 $Algorithm\ 1$ (Pop, jump and push ideals generation). Given an arborescence whos nodes are the sequence $(0, \ldots, n-1)$ when arranged in preorder, this algorithm visits all tuples $(s_1, \ldots, s_n)$ where $s_p \le s_c$ whenever $p$ is the parent of $c$. Rightmost subtrees are pushed or popped between one visit and the next. A single array of jump pointers $[j_1, j_2,\ldots,j_{n}]$ indicates the first node of the next right subtree or $n$ if one doesn't exist.
