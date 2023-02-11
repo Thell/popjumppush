@@ -170,7 +170,7 @@ e) terminate
 
 The primary constraint in the time complexity of this problem is directly related to the combinatorial explosion in the number of ideals $(\mathcal{I})$ as the number of nodes $(n)$ increases. The value of $\mathcal{I}$ is directly related to the structure of the tree.
 
-_Regardless of the structure the tree the total number of elements pushed, including populating the initial array, is equal to the number of elements popped which is equal to $\mathcal{I}$._
+_Regardless of the structure the tree the total number of elements pushed, including populating the initial array, is equal to the number of elements popped which is equal to $\mathcal{I}$.
 
 $\mathcal{I}$ for a rooted tree structure
 - when wide and shallow is $2^{n-1}$.
@@ -192,12 +192,16 @@ This results in a worst case constant amortized cost of $O(1)$ per ideal and an 
 In the balanced tree case, the number of ideals is given by the [OEIS A004019][1] sequence and grows exponentially with $n$. The number of push instances is the product of the number of binary trees of height less than or equal to $n-1$ as given by [OEIS A003095][2].
 
 $\quad\text{Where n is the number of levels in the balanced tree we have}$
+
+
 $$
 \lim_{n \to 5\texttt{+}} \text{ average pushed per instance} = 
-\frac{\text{# of pushed elements}}
-{\text{# of push instances}} = \frac{A004019(n)}{\prod\limits_{i=1}^{n}{A003095(i)}}
+\frac{\text{count pushed elements}}
+{\text{count of push instances}} = \frac{A004019(n)}{\prod\limits_{i=1}^{n}{A003095(i)}}
  = 2.60385\ldots
 $$
+
+
 $\quad\text{The limit, to 512 bits of precision, is reached by } n=10.$
 
 This results in a balanced tree case constant amortized cost of $O(1)$ per ideal and an overall complexity of $O(\mathcal{I})$.
