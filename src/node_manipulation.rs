@@ -100,3 +100,63 @@ pub(crate) fn arrange_by_traversal_post_order(
     result_child.reverse();
     (result_parent, result_child)
 }
+
+pub(crate) fn arrange_largest_subtrees(
+    root: usize,
+    parents: &[usize],
+    children: &Vec<usize>,
+    left: bool,
+) -> (Vec<usize>, Vec<usize>) {
+    /*!  - Arranges subtrees of a rooted tree by size.*/
+    let mut result_parents = vec![];
+    let mut result_children = vec![];
+    let mut stack = vec![(root, 0)];
+    let mut stack2 = vec![(root, 0)];
+    let child_indices = group_indices_by_value(parents);
+
+    let cmp = |a: &usize, b: &usize| {
+        let mut a_count = count_subtrees_at(children[*a], &child_indices, children);
+        let b_count = count_subtrees_at(children[*b], &child_indices, children);
+        if a_count == b_count {
+            a_count += 1;
+            b_count.cmp(&a_count)
+        } else if left {
+            b_count.cmp(&a_count)
+        } else {
+            a_count.cmp(&b_count)
+        }
+    };
+
+    while let Some((node, parent)) = stack.pop() {
+        let mut node_children = match child_indices.get(&node) {
+            Some(c) => c.clone(),
+            None => vec![],
+        };
+
+        node_children.sort_by(cmp);
+
+        for child in node_children.iter() {
+            stack.push((children[*child], node));
+            stack2.push((children[*child], node));
+        }
+
+        result_parents.push(parent);
+        result_children.push(node);
+    }
+    (result_parents, result_children)
+}
+
+pub(crate) fn count_subtrees_at(
+    root: usize,
+    child_indices: &HashMap<usize, Vec<usize>>,
+    children: &Vec<usize>,
+) -> usize {
+    /*!  - Returns the number of subtrees rooted at the given node.*/
+    let mut count = 1;
+    if let Some(c) = child_indices.get(&root) {
+        for child in c {
+            count *= count_subtrees_at(children[*child], child_indices, children);
+        }
+    }
+    count + 1
+}

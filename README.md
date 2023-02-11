@@ -10,7 +10,9 @@ This problem is similar to generating forest ideals and can also be referred as:
 
 This repository contains:
 - Python implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `python` directory.
-- Rust implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `python` directory.
+- Rust implementations of both the Pop Jump Push and Koda-Ruskey algorithms exist in the `src` directory.
+- Rust implementation of a parallel approach to the Pop Jump Push algorithm is also in the `src` directory.
+
 
 Here's a brief summary showing python, pypy and rust generating all ideals of a 31 node fully balanced tree 100 times.
 ```text

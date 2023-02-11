@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.1.4", features = ["derive"] }
+mimalloc = { version = "*", default-features = false }
+rayon = "1.6.1"

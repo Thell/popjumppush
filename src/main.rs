@@ -1,12 +1,19 @@
+use mimalloc::MiMalloc;
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
+
 use clap::Parser;
 
 mod koda_ruskey;
 mod node_manipulation;
 mod pop_jump_push;
+mod pop_jump_push_par;
 mod sample_data;
 
 use koda_ruskey::koda_ruskey_main;
+use node_manipulation::arrange_largest_subtrees;
 use pop_jump_push::pop_jump_push_main;
+use pop_jump_push_par::pop_jump_push_par_main;
 use sample_data::get_sample_data;
 
 pub(crate) type BoxedErr = Box<dyn std::error::Error>;
@@ -39,9 +46,25 @@ struct Cli {
     /// (0 produces summary)
     #[arg(short, long, verbatim_doc_comment)]
     reps: u32,
+
+    /// The max number of workers to use. This only applies to Pop Jump Push.
+    /// ( 0 or 1 is the same as omitting)
+    #[arg(short, long, verbatim_doc_comment)]
+    workers: Option<u8>,
+
+    /// The arrange tree by size of subtrees.
+    /// (true = largest rightmost, false = largest leftmost)
+    #[arg(long, verbatim_doc_comment)]
+    arrange_right: Option<bool>,
 }
 
-fn dump_args(algos: Vec<&str>, root: usize, parents: &Vec<usize>, children: &Vec<usize>) {
+fn dump_args(
+    algos: Vec<&str>,
+    root: usize,
+    parents: &Vec<usize>,
+    children: &Vec<usize>,
+    max_workers: u8,
+) {
     println!("\n=== Test Set Data ===");
     let arg = "root";
     println!("{arg:>18}: {root}");
@@ -53,7 +76,11 @@ fn dump_args(algos: Vec<&str>, root: usize, parents: &Vec<usize>, children: &Vec
     for algo in algos.into_iter() {
         println!("=== {algo} ===");
         if algo == "pop_jump_push" {
-            let _ = pop_jump_push::prep_args(root, parents, children, 1);
+            if max_workers < 2 {
+                let _ = pop_jump_push::prep_args(root, parents, children, 1);
+            } else {
+                let _ = pop_jump_push_par::prep_args(root, parents, children, 1, max_workers);
+            }
         } else {
             let _ = koda_ruskey::prep_args(root, parents, children, 1);
         }
@@ -61,11 +88,22 @@ fn dump_args(algos: Vec<&str>, root: usize, parents: &Vec<usize>, children: &Vec
     }
 }
 
-fn benchmark(algos: Vec<&str>, root: usize, parents: &[usize], children: &Vec<usize>, reps: u32) {
+fn benchmark(
+    algos: Vec<&str>,
+    root: usize,
+    parents: &[usize],
+    children: &Vec<usize>,
+    reps: u32,
+    max_workers: u8,
+) {
     for algo in algos.into_iter() {
         println!("=== {algo} ===");
         if algo == "pop_jump_push" {
-            pop_jump_push_main(root, parents, children, 0, reps);
+            if max_workers < 2 {
+                pop_jump_push_main(root, parents, children, 0, reps);
+            } else {
+                pop_jump_push_par_main(root, parents, children, 0, reps, max_workers);
+            }
         } else {
             koda_ruskey_main(root, parents, children, 0, reps);
         }
@@ -79,11 +117,16 @@ fn generate_ideals(
     parents: &[usize],
     children: &Vec<usize>,
     output: u8,
+    max_workers: u8,
 ) {
     for algo in algos.into_iter() {
         println!("=== {algo} ===");
         if algo == "pop_jump_push" {
-            pop_jump_push_main(root, parents, children, output, 1);
+            if max_workers < 2 {
+                pop_jump_push_main(root, parents, children, output, 1);
+            } else {
+                pop_jump_push_par_main(root, parents, children, output, 1, max_workers);
+            }
         } else {
             koda_ruskey_main(root, parents, children, output, 1);
         }
@@ -98,14 +141,22 @@ fn main() -> Result<(), BoxedErr> {
         1 => vec!["koda_ruskey"],
         _ => vec!["pop_jump_push", "koda_ruskey"],
     };
-    let (root, parents, children) = get_sample_data(&args.sample_set);
+    let (root, mut parents, mut children) = get_sample_data(&args.sample_set);
+    if let Some(arrangement) = args.arrange_right {
+        (parents, children) = arrange_largest_subtrees(root, &parents, &children, arrangement);
+    }
+
     let output = args.output;
     let reps = args.reps;
+    let max_workers = match args.workers {
+        Some(x) => x,
+        _ => 1,
+    };
 
     match output {
-        0 => benchmark(algos, root, &parents, &children, reps),
-        1 => dump_args(algos, root, &parents, &children),
-        _ => generate_ideals(algos, root, &parents, &children, output),
+        0 => benchmark(algos, root, &parents, &children, reps, max_workers),
+        1 => dump_args(algos, root, &parents, &children, max_workers),
+        _ => generate_ideals(algos, root, &parents, &children, output, max_workers),
     }
 
     Ok(())

@@ -59,7 +59,7 @@ pub(crate) fn prep_args(
     (num_nodes, sequence_indices, jump_indices, children)
 }
 
-fn generate_jump_indices(parents: &[usize], children: &[usize]) -> Vec<usize> {
+pub(crate) fn generate_jump_indices(parents: &[usize], children: &[usize]) -> Vec<usize> {
     /*!  - Returns the pre-order traversal end indices for the subtree rooted at each node.
 
     This is a one past last value; range(i, i_end) aka [i..i_end) covers all nodes in the subtree.
