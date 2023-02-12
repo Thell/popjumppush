@@ -59,7 +59,7 @@ pub(crate) fn visit(ideal: &[usize], labels: &[usize], worker_id: u8, output: u8
     if output == 2 {
         println!("{worker_id:<3}: {ideal:?}")
     } else if output >= 3 {
-        let mut result: Vec<_> = ideal.iter().map(|i| labels[*i]).collect();
+        let mut result = ideal.iter().map(|i| labels[*i]).collect::<Vec<_>>();
         result.sort();
         println!("{worker_id:<3}: {result:?}");
     };
@@ -71,6 +71,7 @@ fn get_pop_jump_push_ideals(
     sequence_indices: &mut Vec<usize>,
     jump_indices: &[usize],
 ) -> Vec<Vec<usize>> {
+    /*!  - Returns generated ideals. */
     let mut ideals = vec![];
     while !sequence_indices.is_empty() {
         ideals.push(sequence_indices.clone());

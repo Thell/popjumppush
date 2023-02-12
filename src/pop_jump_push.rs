@@ -31,7 +31,7 @@ pub(crate) fn visit(ideal: &[usize], labels: &[usize], output: u8) {
     if output == 2 {
         println!("{ideal:?}")
     } else if output >= 3 {
-        let mut result: Vec<_> = ideal.iter().map(|i| labels[*i]).collect();
+        let mut result = ideal.iter().map(|i| labels[*i]).collect::<Vec<_>>();
         result.sort();
         println!("{result:?}");
     };
