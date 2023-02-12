@@ -236,21 +236,21 @@ fn get_worker_details(jump_indices: &[usize], num_workers: usize) -> Vec<WorkerD
     // Generation is done in reverse pre-order.
     // A hard minimum index limit of the node after the leading is
     let hard_suffix_min_index = ideal_prefixes[0].last().unwrap() + 1;
-    let base_prefix_indices: Vec<usize> = (0..hard_suffix_min_index).collect();
+    let base_prefix_indices = (0..hard_suffix_min_index).collect::<Vec<_>>();
 
     // The disabled nodes in a prefix might disable nodes beyond the min suffix index so we need to
     // identify each prefixes independent min suffix index, the value at the index is set such that
     // subtree generation will terminate when the reverse pre-order processing completes the suffix.
     // A prefix and all indices following its min suffix index are a workers starting subtree.
     let num_nodes = jump_indices.len();
-    let tree_indices: Vec<usize> = (0..num_nodes).collect();
+    let tree_indices = (0..num_nodes).collect::<Vec<_>>();
     let mut worker_details = vec![];
     for (worker_id, prefix) in ideal_prefixes.iter().enumerate() {
-        let deactivated_nodes: Vec<usize> = base_prefix_indices
+        let deactivated_nodes = base_prefix_indices
             .iter()
             .filter(|i| !prefix.contains(i))
             .cloned()
-            .collect();
+            .collect::<Vec<_>>();
 
         let stop_value = std::cmp::max(
             deactivated_nodes
