@@ -1,51 +1,7 @@
 use std::collections::HashMap;
-use std::collections::VecDeque;
-
-pub(crate) fn count_subtrees(root: usize, parents: &[usize], children: &Vec<usize>) -> usize {
-    /*!  - Return the total number of possible subtrees rooted at root.
-
-    Each leaf can be either active or inactive (for two states) and each parent is the product
-    of its children's subtree counts plus 1.
-    */
-    let child_indices = group_indices_by_value(parents);
-    let num_nodes = children.len();
-    let root_index = children.iter().position(|&n| n == root).unwrap();
-
-    let mut stack = VecDeque::new();
-    let mut nodes = Vec::new();
-    stack.push_back(root_index);
-
-    while let Some(node) = stack.pop_back() {
-        nodes.push(node);
-        for child_index in child_indices
-            .get(&children[node])
-            .unwrap_or(&vec![])
-            .iter()
-            .rev()
-        {
-            stack.push_back(*child_index);
-        }
-    }
-
-    let mut subtree_counts = vec![1; num_nodes];
-    for &node in nodes.iter().rev() {
-        let mut count = subtree_counts[node];
-        if let Some(node_children) = child_indices.get(&children[node]) {
-            for &child_index in node_children {
-                let child_counts = subtree_counts[child_index];
-                count *= child_counts;
-            }
-        }
-        count += 1;
-        subtree_counts[node] = count;
-    }
-
-    subtree_counts[0] - 1
-}
 
 pub(crate) fn group_indices_by_value(values: &[usize]) -> HashMap<usize, Vec<usize>> {
-    /*!  - Returns HashMap keyed by unique values with occurance indices as the values.
-     */
+    /*!  - Returns HashMap keyed by unique values with occurance indices as the values. */
     let mut groups: HashMap<usize, Vec<usize>> = HashMap::new();
     for (index, &value) in values.iter().enumerate() {
         groups.entry(value).or_default().push(index);
@@ -111,13 +67,13 @@ pub(crate) fn arrange_largest_subtrees(
     let mut result_parents = vec![];
     let mut result_children = vec![];
     let mut stack = vec![(root, 0)];
-    let mut stack2 = vec![(root, 0)];
     let child_indices = group_indices_by_value(parents);
 
     let cmp = |a: &usize, b: &usize| {
         let mut a_count = count_subtrees_at(children[*a], &child_indices, children);
         let b_count = count_subtrees_at(children[*b], &child_indices, children);
         if a_count == b_count {
+            // Keep stable order when equal (there is likely a better way to do this).
             a_count += 1;
             b_count.cmp(&a_count)
         } else if left {
@@ -134,16 +90,19 @@ pub(crate) fn arrange_largest_subtrees(
         };
 
         node_children.sort_by(cmp);
-
         for child in node_children.iter() {
             stack.push((children[*child], node));
-            stack2.push((children[*child], node));
         }
-
         result_parents.push(parent);
         result_children.push(node);
     }
     (result_parents, result_children)
+}
+
+pub(crate) fn count_subtrees(root: usize, parents: &[usize], children: &Vec<usize>) -> usize {
+    /*!  - Return the total number of possible subtrees rooted at root. */
+    let child_indices = group_indices_by_value(parents);
+    count_subtrees_at(root, &child_indices, children) - 1
 }
 
 pub(crate) fn count_subtrees_at(
@@ -151,7 +110,7 @@ pub(crate) fn count_subtrees_at(
     child_indices: &HashMap<usize, Vec<usize>>,
     children: &Vec<usize>,
 ) -> usize {
-    /*!  - Returns the number of subtrees rooted at the given node.*/
+    /*!  - Returns the number of subtrees rooted at the given node. */
     let mut count = 1;
     if let Some(c) = child_indices.get(&root) {
         for child in c {
