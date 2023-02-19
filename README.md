@@ -102,7 +102,7 @@ d) Consume the end of the indices and replenish from the root of the next subtre
 ```text
 f(j=jump_indices)
     n = |j|
-    s = [0..n-1]
+    s = [0..n)
     While s:
         visit s
         i = j[s.pop()]
