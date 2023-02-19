@@ -13,7 +13,9 @@ mod sample_data;
 use koda_ruskey::koda_ruskey_main;
 use node_manipulation::arrange_largest_subtrees;
 use pop_jump_push::pop_jump_push_main;
+use pop_jump_push::pop_jump_push_unsafe_main;
 use pop_jump_push_par::pop_jump_push_par_main;
+use pop_jump_push_par::pop_jump_push_unsafe_par_main;
 use sample_data::get_sample_data;
 
 pub(crate) type BoxedErr = Box<dyn std::error::Error>;
@@ -100,9 +102,15 @@ fn benchmark(
         println!("=== {algo} ===");
         if algo == "pop_jump_push" {
             if max_workers < 2 {
+                println!("== safe ==");
                 pop_jump_push_main(root, parents, children, 0, reps);
+                println!("== unsafe ==");
+                pop_jump_push_unsafe_main(root, parents, children, 0, reps);
             } else {
+                println!("== safe ==");
                 pop_jump_push_par_main(root, parents, children, 0, reps, max_workers);
+                println!("== unsafe ==");
+                pop_jump_push_unsafe_par_main(root, parents, children, 0, reps, max_workers);
             }
         } else {
             koda_ruskey_main(root, parents, children, 0, reps);

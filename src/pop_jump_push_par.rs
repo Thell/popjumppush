@@ -26,6 +26,46 @@ struct WorkerDetail {
     worker_id: u8,
 }
 
+use std::ptr;
+
+fn pop_jump_push_unsafe_par(arg_set: &ParArg) -> usize {
+    /*!  - Implements the Pop Jump Push algorithm that works on chunks.
+     *  Loop terminates on the last ideal for the worker so it must be visited outside of the loop.
+     */
+    let num_nodes = arg_set.num_nodes;
+    let mut sequence_indices = arg_set.sequence_indices.clone();
+    let jump_indices = arg_set.jump_indices.clone();
+    let stop_index = arg_set.stop_index;
+    let stop_value = arg_set.stop_value;
+    let labels = &arg_set.labels;
+    let worker_id = arg_set.worker_id;
+    let output = arg_set.output;
+    let mut j;
+    let mut index = sequence_indices.len();
+    let raw_ptr = sequence_indices.as_ptr();
+    let mut visited_count = 0;
+
+    unsafe {
+        while index > stop_index && sequence_indices[stop_index] >= stop_value {
+            visited_count += visit(
+                &*ptr::slice_from_raw_parts(raw_ptr, index),
+                labels,
+                worker_id,
+                output,
+            );
+            index -= 1;
+            j = *jump_indices.get_unchecked(*sequence_indices.get_unchecked(index));
+            while j < num_nodes {
+                *sequence_indices.get_unchecked_mut(index) = j;
+                j += 1;
+                index += 1;
+            }
+        }
+        visited_count += visit(&sequence_indices[..index], labels, worker_id, output);
+    }
+    visited_count
+}
+
 fn pop_jump_push_par(arg_set: &ParArg) -> usize {
     /*!  - Implements the Pop Jump Push algorithm that works on chunks.
      *  Loop terminates on the last ideal for the worker so it must be visited outside of the loop.
@@ -161,6 +201,76 @@ pub(crate) fn pop_jump_push_par_main(
             .map(|arg_set| {
                 let start_time = Instant::now();
                 let ideals_count = pop_jump_push_par(arg_set);
+                let delta = start_time.elapsed();
+                (arg_set.worker_id, delta, ideals_count)
+            })
+            .collect::<Vec<_>>();
+        let rep_time_delta = rep_start_time.elapsed().as_secs_f64();
+        if rep_time_delta < best_rep_time_delta {
+            best_rep_time_delta = rep_time_delta
+        }
+    }
+    let overall_time_delta = overall_start_time.elapsed().as_secs_f64();
+
+    println!("\tCompleted generating ideals...");
+    println!(
+        "\tAvg Duration per tree {}",
+        overall_time_delta / reps as f64
+    );
+    println!("\tBest Duration per tree {best_rep_time_delta}");
+    println!(
+        "\t{} ns avg per ideal",
+        (overall_time_delta / reps as f64) / ideals_count as f64 * 1e9
+    );
+    println!(
+        "\t{} ns best per ideal\n",
+        best_rep_time_delta / ideals_count as f64 * 1e9
+    );
+
+    println!("\tWorkers summary for the last rep...");
+    performance_data.sort_by_key(|x| x.0);
+    for (id, delta, ideal_count) in performance_data.iter() {
+        let delta = delta.as_secs_f64();
+        println!(
+            "\t\tworker {id:<3} generated {ideal_count} ideals in {delta} for {:?} (ns)",
+            delta / *ideal_count as f64 * 1e9,
+        )
+    }
+    let generated_count: usize = performance_data
+        .iter()
+        .map(|(_, _, ideal_count)| ideal_count)
+        .sum();
+    println!("\t\tWorkers    generated {generated_count} ideals.\n");
+}
+
+pub(crate) fn pop_jump_push_unsafe_par_main(
+    root: usize,
+    parents: &[usize],
+    children: &Vec<usize>,
+    output: u8,
+    reps: u32,
+    max_workers: u8,
+) {
+    /*! Rust doesn't have stable generators so the whole tree gets processed with 'visits'. */
+    let args = prep_args(root, parents, children, output, max_workers);
+
+    let num_nodes = children.len();
+    let num_workers = args.len();
+    let ideals_count = count_subtrees(children[0], parents, children);
+    let ttl_ideals = ideals_count as f64 * reps as f64;
+    print!("Generating {ideals_count} ideals from {num_nodes} nodes using ");
+    println!("{num_workers} workers {reps} times ({ttl_ideals}).\n");
+
+    let mut performance_data = vec![];
+    let mut best_rep_time_delta = f64::MAX;
+    let overall_start_time = Instant::now();
+    for _ in 0..reps {
+        let rep_start_time = Instant::now();
+        performance_data = args
+            .par_iter()
+            .map(|arg_set| {
+                let start_time = Instant::now();
+                let ideals_count = pop_jump_push_unsafe_par(arg_set);
                 let delta = start_time.elapsed();
                 (arg_set.worker_id, delta, ideals_count)
             })
