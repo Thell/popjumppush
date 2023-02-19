@@ -13,37 +13,7 @@ This repository contains:
 - Rust implementations of both the Pop Jump Push and Koda-Ruskey algorithms in the `src` directory.
 - Rust implementation of a parallel approach to the Pop Jump Push algorithm in the `src` directory.
 
-
-Here's a brief summary showing python, pypy and rust generating all ideals of a 31 node fully balanced tree 100 times.
-```text
-Getting test set: set_31B
-Generating 458,328 ideals from 31 nodes 100 times (45,832,900).
-
-*** Python ***
-pop_jump_push   96.83866478881582 ns avg per ideal
-koda_ruskey    152.321651135006 ns avg per ideal
-
-*** pypy ***
-pop_jump_push   13.474159975150592 ns avg per ideal
-koda_ruskey     17.237536134107437 ns avg per ideal
-
-*** Rust ***
-pop_jump_push    1.6211760547554268 ns avg per ideal
-koda_ruskey      5.092732513107397 ns avg per ideal
-```
-
-It should also be noted that a parallel Pop Jump Push implementation which processes in chunks scales nicely with physical cores (since it is cpu-bound). Tree structure plays a big part in how many workers can be used. A 63 node fully balanced tree will not chunk well for 16 workers but 13 works fine.
-
-```text
-Getting test set: set_63B
-Generating 210066388900 ideals from 63 nodes 1 times (210066388900).
-
-*** Rust ***
-par_pop_jump_push    Avg Duration per tree   64.0275749 (13 workers)
-par_pop_jump_push    Avg Duration per tree   68.0275749 (8 workers)
-pop_jump_push        Avg Duration per tree  340.8131211
-koda_ruskey          Avg Duration per tree 1054.7239127
-```
+See the end of this file for some sample output.
 
 ----
 
@@ -217,7 +187,40 @@ This results in a best case constant time cost of $O(1)$ per ideal and an overal
 
 The time complexity of the pop jump push algorithm for generating the ideals of an arborescence is directly related to the structure of the tree. In the worst case, the balanced tree case and the best case the algorithm has a constant amortized time complexity of $O(1)$ per ideal and an overall complexity of $O(\mathcal{I})$.
 
+-----
 
+## Sample Benchmark Comparison Output
+
+Here's a brief summary showing python, pypy and rust generating all ideals of a 31 node fully balanced tree 100 times.
+```text
+Getting test set: set_31B
+Generating 458,328 ideals from 31 nodes 100 times (45,832,900).
+
+*** Python ***
+pop_jump_push   96.83866478881582 ns avg per ideal
+koda_ruskey    152.321651135006 ns avg per ideal
+
+*** pypy ***
+pop_jump_push   13.474159975150592 ns avg per ideal
+koda_ruskey     17.237536134107437 ns avg per ideal
+
+*** Rust ***
+pop_jump_push    1.6211760547554268 ns avg per ideal
+koda_ruskey      5.092732513107397 ns avg per ideal
+```
+
+It should also be noted that a parallel Pop Jump Push implementation which processes in chunks scales nicely with physical cores (since it is cpu-bound). Tree structure plays a big part in how many workers can be used. A 63 node fully balanced tree will not chunk well for 16 workers but 13 works fine.
+
+```text
+Getting test set: set_63B
+Generating 210066388900 ideals from 63 nodes 1 times (210066388900).
+
+*** Rust ***
+par_pop_jump_push    Avg Duration per tree   64.0275749 (13 workers)
+par_pop_jump_push    Avg Duration per tree   68.0275749 (8 workers)
+pop_jump_push        Avg Duration per tree  340.8131211
+koda_ruskey          Avg Duration per tree 1054.7239127
+```
 [1]:https://oeis.org/A004019 "OEIS - Number of rooted subtrees in binary tree of depth n."
 
 [2]:https://oeis.org/A003095 "OEIS - Number of binary trees of height less than or equal to n."
