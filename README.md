@@ -140,7 +140,7 @@ e) terminate
 
 The primary constraint in the time complexity of this problem is directly related to the combinatorial explosion in the number of ideals $(\mathcal{I})$ as the number of nodes $(n)$ increases. The value of $\mathcal{I}$ is directly related to the structure of the tree.
 
-_Regardless of the structure the tree the total number of elements pushed, including populating the initial array, is equal to the number of elements popped which is equal to $\mathcal{I}$.
+Regardless of the structure the tree the total number of elements pushed, including populating the initial array, is equal to the number of elements popped which is equal to $\mathcal{I}$.
 
 $\mathcal{I}$ for a rooted tree structure
 - when wide and shallow is $2^{n-1}$.
